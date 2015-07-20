@@ -1,5 +1,49 @@
-#!/usr/bin/python
+#!/usr/bin/env perl
 
-# To solve this problem, make the './run' executable handle any 
-# appropriate command line arguments and stdin and output the
-# solution to stdout.
+use strict;
+use warnings;
+
+use Math::BigInt;
+
+sub read_args {
+  my %args = ();
+  while (@ARGV) {
+    my ($name, $value) = split /=/, shift @ARGV;
+    $name =~ s/^--//;
+    $args{$name} = $value;
+  }
+
+  return %args;
+}
+
+sub read_list {
+  my @list = ();
+  while (<STDIN>) {
+    chomp;
+    last unless $_;
+    push @list, Math::BigInt->new($_);
+  }
+
+  return @list;
+}
+
+sub sort_list {
+  my ($key, $list) = @_;
+
+  return map { $_->[0] }
+    sort { $a->[1] <=> $b->[1] }
+    map { [ $_, $key->copy->bxor($_) ] }
+    @$list;
+}
+
+my %args = read_args;
+my @list = read_list;
+
+while (<STDIN>) {
+  chomp;
+
+  my $key = Math::BigInt->new($_);
+  my @sorted = sort_list $key, \@list;
+
+  print "$_\n" for @sorted[0 .. $args{request_size} - 1];
+}
