@@ -25,50 +25,17 @@ typedef struct dist {
   uint64_t distance;
 } dist;
 
-void merge(dist *output, dist* left, int left_count, dist* right, int right_count) {
-  int i, j, k;
-
-  i = j = k = 0;
-
-  while (i < left_count && j < right_count) output[k++] = (left[i].distance < right[j].distance) ? left[i++] : right[j++];
-  while (i < left_count) output[k++] = left[i++];
-  while (j < right_count) output[k++] = right[j++];
-}
-
-void sort(dist *list, int n) {
-  int mid, i;
-  dist *left, *right;
-
-  if (n < 2) return;
-
-  mid = n / 2;
-
-  left = (dist*)malloc(mid * sizeof(dist));
-  right = (dist*)malloc((n - mid) * sizeof(dist));
-
-  for (i = 0; i < mid; ++i) left[i] = list[i];
-  for (i = mid; i < n; ++i) right[i - mid] = list[i];
-
-  sort(left, mid);
-  sort(right, n - mid);
-  merge(list, left, mid, right, n - mid);
-
-  free(left);
-  free(right);
-}
-
 void nearest(uint64_t query, list *list, size_t count, uint64_t *output) {
   size_t i = 0;
   dist mins[count];
 
+  // initialize with max values
   for (i = 0; i < count; ++i) {
-    mins[i].value = list->array[i];
-    mins[i].distance = mins[i].value ^ query;
+    mins[i].value = 0;
+    mins[i].distance = -1;
   }
 
-  sort(mins, count);
-
-  for (i = count; i < list->length; ++i) {
+  for (i = 0; i < list->length; ++i) {
     dist d = {
       .value    = list->array[i],
       .distance = list->array[i] ^ query
