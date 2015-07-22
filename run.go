@@ -37,8 +37,11 @@ func nearest(key uint64, list []uint64, count uint) [] uint64 {
     d := Dist{ list[i], list[i] ^ key }
 
     if d.distance < mins[count - 1].distance {
-      mins[count - 1] = d
-      sort.Sort(ByDist(mins))
+      i := count - 1
+      for ; i > 0 && mins[i - 1].distance > d.distance; i-- {
+        mins[i] = mins[i - 1]
+      }
+      mins[i] = d;
     }
   }
 
