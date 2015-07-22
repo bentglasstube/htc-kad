@@ -1,4 +1,4 @@
 all:
-	go build run.go
+	$(CC) -O3 main.c -o run
 
 .PHONY: all
