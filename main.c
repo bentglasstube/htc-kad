@@ -8,18 +8,6 @@ typedef struct list {
   size_t capacity;
 } list;
 
-void list_init(list *list, size_t capacity) {
-  list->capacity = capacity;
-  list->length = 0;
-  list->array = malloc(list->capacity * sizeof(uint64_t));
-}
-
-void list_free(list *list) {
-  free(list->array);
-  list->capacity = list->length = 0;
-  list->array = NULL;
-}
-
 // no error checking for speed
 void list_push(list *list, uint64_t value) {
   if (list->length == list->capacity) {
@@ -104,7 +92,10 @@ int main(int argc, char **argv) {
 
   sscanf(argv[1], "--request_size=%u", &request_size);
 
-  list_init(&values, 2);
+  values.length = 0;
+  values.capacity = 2;
+  values.array = malloc(values.capacity * sizeof(uint64_t));
+
   for (;;) {
     char *line;
     size_t len = 0;
@@ -140,5 +131,5 @@ int main(int argc, char **argv) {
     }
   }
 
-  list_free(&values);
+  free(values.array);
 }
