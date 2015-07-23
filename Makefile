@@ -1,4 +1,18 @@
-all:
-	$(CC) -O3 main.c -o run
+SRC=$(wildcard *.c)
+OBJ=$(patsubst %.c,%.o,$(SRC))
 
-.PHONY: all
+all: run
+
+run: $(OBJ)
+	$(CC) -o $@ $^
+
+%.o: %.c
+	$(CC) -c -O3 -o $@ $<
+
+clean:
+	rm *.o run
+
+test: run
+	t/runtests
+
+.PHONY: all clean test
